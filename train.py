@@ -17,6 +17,7 @@ import wandb
 
 import os
 import argparse
+from datetime import datetime
 
 def setup_ddp():
     """初始化 DDP 环境"""
@@ -260,7 +261,12 @@ def main():
             "model": model.module.state_dict(),
             "ema": model_ema.state_dict(),
         }
-        torch.save(state_dict, "model.pth")
+        # 创建带时间戳和参数信息的模型文件名
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        model_name = f"model_reg{args.num_register_tokens}_bs{batch_size * world_size}_lr{args.lr}_{timestamp}.pth"
+        save_path = os.path.join("/lpai/output/models", model_name)
+        torch.save(state_dict, save_path)
+        print(f"Model saved to {save_path}")
 
     # 清理 DDP
     cleanup_ddp()
