@@ -19,7 +19,7 @@ class TimestepEmbedder(nn.Module):
         self.nfreq = nfreq
 
     @staticmethod
-    def timestep_embedding(t, dim, max_period=10000):
+    def timestep_embedding(t, dim, max_period=10):
         half_dim = dim // 2
         freqs = torch.exp(
             -math.log(max_period)
@@ -79,7 +79,7 @@ class DiTBlock(nn.Module):
     def __init__(self, dim, num_heads, mlp_ratio=4.0):
         super().__init__()
         self.norm1 = RMSNorm(dim)
-        self.attn = Attention(dim, num_heads=num_heads, qkv_bias=True, qk_norm=True, norm_layer=RMSNorm)
+        self.attn = Attention(dim, num_heads=num_heads, qkv_bias=True, qk_norm=False, norm_layer=RMSNorm)
         self.norm2 = RMSNorm(dim)
         mlp_dim = int(dim * mlp_ratio)
         approx_gelu = lambda: nn.GELU(approximate="tanh")
